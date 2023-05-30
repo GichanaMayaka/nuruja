@@ -1,15 +1,13 @@
 import click
-from faker import Faker
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from sqlalchemy.engine.mock import MockConnection
+from sqlalchemy import create_engine, Engine
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from .database import db
 from ..configs import configs
 
 
-def database_engine(uri: str) -> MockConnection:
+def database_engine(uri: str) -> Engine:
     engine = create_engine(
         uri
     )
@@ -23,10 +21,22 @@ def create_db(uri: str = configs.POSTGRES_DSN) -> None:
         create_database(engine.url)
 
 
-# def create_tables(database: SQLAlchemy = db) -> None:
-#     database.create_all()
-#
-#
+def drop_db() -> None:
+    engine = database_engine(uri=configs.POSTGRES_DSN)
+    if database_exists(engine.url):
+        drop_database(engine.url)
+
+
+def create_tables(database: SQLAlchemy = db) -> None:
+    """Create all tables defined in the model[s]"""
+    database.create_all()
+
+
+def drop_tables() -> None:
+    """Drops the database."""
+    if click.confirm('Are you sure?', default=False, abort=True):
+        db.drop_all()
+
 # @click.option("--num_users", default=3, help="number of users")
 # def seed(num_users: int) -> list:
 #     fakes = Faker()
@@ -68,19 +78,9 @@ def create_db(uri: str = configs.POSTGRES_DSN) -> None:
 #     db.session.commit()
 #
 #
-# def drop_tables() -> None:
-#     """Drops the database."""
-#     if click.confirm('Are you sure?', default=False, abort=True):
-#         db.drop_all()
 #
 #
 # def recreate_db() -> None:
 #     """Same as running drop_db() and create_db()."""
 #     drop_tables()
 #     create_tables()
-
-
-def drop_db() -> None:
-    engine = database_engine(uri=configs.POSTGRES_DSN)
-    if database_exists(engine.url):
-        drop_database(engine.url)

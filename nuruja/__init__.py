@@ -1,12 +1,16 @@
 from http import HTTPStatus
 
 from flask import Flask
-from .commands import create_db, drop_db
+
+from .commands import create_db, drop_db, create_tables, drop_tables
+from .database import db
+from .models import User
 from ..configs import configs
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = configs.POSTGRES_DSN
 
     register_commands(app)
     register_extensions(app)
@@ -20,11 +24,11 @@ def create_app() -> Flask:
 
 
 def register_extensions(app: Flask) -> None:
-    return
+    db.init_app(app)
 
 
 def register_commands(app: Flask) -> None:
-    for command in [create_db, drop_db]:
+    for command in [create_db, drop_db, create_tables, drop_tables]:
         app.cli.command()(command)
 
 
