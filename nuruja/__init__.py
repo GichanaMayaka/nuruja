@@ -5,6 +5,9 @@ from flask import Flask
 from .commands import create_db, drop_db, create_tables, drop_tables, recreate_tables
 from .extensions import db
 from .models import User
+from .controllers.users import users
+from .controllers.books import books
+from .controllers.borrowing import borrowing
 from ..configs import configs
 
 
@@ -33,4 +36,6 @@ def register_commands(app: Flask) -> None:
 
 
 def register_blueprints(app: Flask) -> None:
-    return
+    app.register_blueprint(users)
+    app.register_blueprint(books)
+    app.register_blueprint(borrowing)
