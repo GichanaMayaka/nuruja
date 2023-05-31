@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Engine
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
-from .database import db
+from .extensions import db
 from ..configs import configs
 
 
@@ -36,6 +36,12 @@ def drop_tables() -> None:
     """Drops the database."""
     if click.confirm('Are you sure?', default=False, abort=True):
         db.drop_all()
+
+
+def recreate_tables() -> None:
+    """Same as running drop_tables() and create_tables()."""
+    drop_tables()
+    create_tables()
 
 # @click.option("--num_users", default=3, help="number of users")
 # def seed(num_users: int) -> list:
@@ -80,7 +86,3 @@ def drop_tables() -> None:
 #
 #
 #
-# def recreate_db() -> None:
-#     """Same as running drop_db() and create_db()."""
-#     drop_tables()
-#     create_tables()

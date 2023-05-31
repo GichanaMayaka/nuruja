@@ -25,11 +25,13 @@ class ProdConfigs(DevConfigs):
 
 
 def factory():
-    env = os.environ.get("ENV", "dev")
+    env: str = os.environ.get("ENV", "dev")
 
-    development = DevConfigs()
-    testing = TestConfigs()
-    production = ProdConfigs()
+    development: DevConfigs = DevConfigs()
+    testing: TestConfigs = TestConfigs()
+    production: ProdConfigs = ProdConfigs()
+
+    env = env.lower()
 
     if env == "dev":
         return development

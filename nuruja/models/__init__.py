@@ -1,46 +1,7 @@
 import pendulum
 
-from ..database import db
-
-
-class CRUDMixin(object):
-    """
-    Mixin that offers functionality common to most, if not all of the models
-    """
-    __table_args__ = {'extend_existing': True}
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    @classmethod
-    def get_by_id(cls, id: int):
-        if any((isinstance(id, str) and id.isdigit(),
-                isinstance(id, (int, float))), ):
-            return cls.query.get(int(id))
-        return None
-
-    @classmethod
-    def create(cls, **kwargs):
-        instance = cls(**kwargs)
-        return instance.save()
-
-    def save(self, commit: bool = True):
-        db.session.add(self)
-
-        if commit:
-            db.session.commit()
-        return self
-
-    def delete(self, commit: bool = True, **kwargs):
-        db.session.delete(self)
-
-        if commit:
-            db.session.commit()
-        return self
-
-    def update(self, commit: bool = True, **kwargs):
-        for attr, value in kwargs.items():
-            setattr(self, attr, value)
-        return commit and self.save() or self
+from .mixins import CRUDMixin
+from .. import db
 
 
 class User(db.Model, CRUDMixin):
@@ -82,7 +43,7 @@ class Book(db.Model, CRUDMixin):
 
     # Relationship[s]
     category = db.relationship("Category", back_populates="book")
-    borrowing = db.relationship("Borrowing", back_populates="book")
+    borrowing = db.relationship("Borrowing", back_populates="book", uselist=False)
     shelf = db.relationship("Shelf", back_populates="book")
 
     def __init__(self, title: str, author: str, isbn: str, date_of_publication: pendulum.DateTime,
@@ -118,10 +79,10 @@ class Category(db.Model, CRUDMixin):
 class Shelf(db.Model, CRUDMixin):
     __tablename__ = "shelf"
 
-    floor = db.Column(db.String(10), nullable=True, unique=True)
+    floor = db.Column(db.String(10), nullable=True, unique=False)
 
     # Foreign Key[s]
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"))
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id", ondelete="CASCADE"))
 
     # Relationship[s]
     book = db.relationship("Book", back_populates="shelf")
@@ -138,6 +99,8 @@ class Borrowing(db.Model, CRUDMixin):
 
     rent_fee = db.Column(db.Float, default=100, nullable=False, unique=False)
     is_return = db.Column(db.Boolean, default=False, nullable=False, unique=False)
+    date_borrowed = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now)
+    date_due = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now() + pendulum.duration(days=14))
 
     # Foreign Key[s]
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -146,6 +109,30 @@ class Borrowing(db.Model, CRUDMixin):
     # Relationship[s]
     book = db.relationship("Book", back_populates="borrowing")
     user = db.relationship("User", back_populates="borrowing")
+    order = db.relationship("Order", back_populates="borrowing")
 
-# class Order(db.Model, CRUDMixin):
-# class Transaction(db.Model, CRUDMixin)
+
+class Order(db.Model, CRUDMixin):
+    __tablename__ = "order"
+    order_count = db.Column(db.Integer, nullable=False, unique=False)
+    order_date = db.Column(db.DateTime, nullable=False, unique=False)
+
+    # Foreign Key[s]
+    borrowing_id = db.Column(db.Integer, db.ForeignKey("borrowing.id"))
+
+    # Relationship[s]
+    borrowing = db.relationship("Borrowing", back_populates="order")
+    transactions = db.relationship("Transaction", back_populates="order")
+
+
+class Transaction(db.Model, CRUDMixin):
+    __tablename__ = "transactions"
+
+    transaction_date = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now)
+    amount = db.Column(db.Float, nullable=False, unique=False)
+
+    # Foreign Key[s]
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id", ondelete="CASCADE"))
+
+    # Relationship[s]
+    orders = db.relationship("Order", back_populates="transactions")
