@@ -7,7 +7,7 @@ from .extensions import db
 from .models import User
 from .controllers.users import users
 from .controllers.books import books
-from .controllers.borrowing import borrowing
+from .controllers.transactions import transactions
 from ..configs import configs
 
 
@@ -38,4 +38,4 @@ def register_commands(app: Flask) -> None:
 def register_blueprints(app: Flask) -> None:
     app.register_blueprint(users)
     app.register_blueprint(books)
-    app.register_blueprint(borrowing)
+    app.register_blueprint(transactions)

@@ -22,9 +22,15 @@ def add_a_book(body: BookSchema) -> tuple[Response, int]:
     if book:
         return jsonify(details="Book already exists"), HTTPStatus.CONFLICT
 
-    new_book = Book.create(title=body.title, author=body.author, isbn=body.isbn,
-                           date_of_publication=body.date_of_publication,
-                           status=body.status)
+    new_book = Book.create(
+        title=body.title,
+        author=body.author,
+        isbn=body.isbn,
+        date_of_publication=body.date_of_publication,
+        status=body.status,
+        rent_fee=body.rent_fee,
+        late_penalty_fee=body.late_penalty_fee
+    )
     new_book.save()
 
     return jsonify(details="Book added successfully"), HTTPStatus.CREATED
@@ -68,8 +74,15 @@ def update_book_details(book_id: int, body: BookSchema) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
-        book.update(title=body.title, author=body.author, isbn=body.isbn, date_of_publication=body.date_of_publication,
-                    status=body.status)
+        book.update(
+            title=body.title,
+            author=body.author,
+            isbn=body.isbn,
+            date_of_publication=body.date_of_publication,
+            status=body.status,
+            rent_fee=body.rent_fee,
+            late_penalty_fee=body.late_penalty_fee
+        )
 
         return jsonify(details="Book updated successfully"), HTTPStatus.ACCEPTED
 

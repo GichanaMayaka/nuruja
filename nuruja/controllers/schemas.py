@@ -33,6 +33,8 @@ class BookSchema(BaseSchema):
     date_of_publication: DateTime
     category: Optional[str]
     status: str
+    rent_fee: int
+    late_penalty_fee: int
 
 
 class AllBooksSchema(BaseSchema):
@@ -40,9 +42,4 @@ class AllBooksSchema(BaseSchema):
 
 
 class BorrowBookSchema(BaseSchema):
-    book_id: int
-    rent_fee: float
-
-
-class ReturnBookSchema(BaseSchema):
     book_id: int
