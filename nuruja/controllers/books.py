@@ -12,7 +12,7 @@ from .schemas import AllBooksSchema, BookRequestSchema, BookResponseSchema
 books = Blueprint("books", __name__)
 
 
-@books.route("/books", methods=["POST"])
+@books.route("/books/new", methods=["POST"])
 @validate(body=BookRequestSchema)
 def add_a_book(body: BookRequestSchema) -> tuple[Response, int]:
     book = Book.query.filter(
@@ -71,8 +71,8 @@ def remove_book(book_id: int) -> tuple[Response, int]:
 
 
 @books.route("/books/<book_id>", methods=["PUT"])
-@validate(body=BookResponseSchema)
-def update_book_details(book_id: int, body: BookResponseSchema) -> tuple[Response, int]:
+@validate(body=BookRequestSchema)
+def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
