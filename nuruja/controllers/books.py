@@ -6,17 +6,19 @@ from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_
 
-from .schemas import AllBooksSchema, BookSchema
 from ..models import Book
+from .schemas import AllBooksSchema, BookRequestSchema, BookResponseSchema
 
 books = Blueprint("books", __name__)
 
 
 @books.route("/books", methods=["POST"])
-@validate(body=BookSchema)
-def add_a_book(body: BookSchema) -> tuple[Response, int]:
+@validate(body=BookRequestSchema)
+def add_a_book(body: BookRequestSchema) -> tuple[Response, int]:
     book = Book.query.filter(
-        and_(Book.isbn == body.isbn, Book.title == body.title, Book.author == body.author)
+        and_(
+            Book.isbn == body.isbn, Book.title == body.title, Book.author == body.author
+        )
     ).first()
 
     if book:
@@ -29,7 +31,7 @@ def add_a_book(body: BookSchema) -> tuple[Response, int]:
         date_of_publication=body.date_of_publication,
         status=body.status,
         rent_fee=body.rent_fee,
-        late_penalty_fee=body.late_penalty_fee
+        late_penalty_fee=body.late_penalty_fee,
     )
     new_book.save()
 
@@ -51,7 +53,7 @@ def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
-        return BookSchema.from_orm(book).dict(), HTTPStatus.OK
+        return BookResponseSchema.from_orm(book).dict(), HTTPStatus.OK
 
     return jsonify(details="Book not Found"), HTTPStatus.NOT_FOUND
 
@@ -69,8 +71,8 @@ def remove_book(book_id: int) -> tuple[Response, int]:
 
 
 @books.route("/books/<book_id>", methods=["PUT"])
-@validate(body=BookSchema)
-def update_book_details(book_id: int, body: BookSchema) -> tuple[Response, int]:
+@validate(body=BookResponseSchema)
+def update_book_details(book_id: int, body: BookResponseSchema) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
@@ -81,7 +83,7 @@ def update_book_details(book_id: int, body: BookSchema) -> tuple[Response, int]:
             date_of_publication=body.date_of_publication,
             status=body.status,
             rent_fee=body.rent_fee,
-            late_penalty_fee=body.late_penalty_fee
+            late_penalty_fee=body.late_penalty_fee,
         )
 
         return jsonify(details="Book updated successfully"), HTTPStatus.ACCEPTED

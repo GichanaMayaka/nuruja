@@ -31,6 +31,7 @@ def create_app() -> Flask:
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allowed-Methods"] = "GET, POST, PUT, DELETE"
         response.headers["Content-Type"] = "application/json"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         return response
 
     return app

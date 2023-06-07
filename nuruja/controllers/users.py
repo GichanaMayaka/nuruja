@@ -5,8 +5,13 @@ from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_
 
-from .schemas import UserSchema, UserUpdateSchema, AllUsersSchema
 from ..models import User
+from .schemas import (
+    AllUsersSchema,
+    UserResponseSchema,
+    UserUpdateSchema,
+    UserRequestSchema,
+)
 
 users = Blueprint("users", __name__)
 
@@ -22,8 +27,8 @@ def get_all_users():
 
 
 @users.route("/users", methods=["POST"])
-@validate(body=UserSchema)
-def add_user(body: UserSchema) -> tuple[Response, int]:
+@validate(body=UserResponseSchema)
+def add_user(body: UserRequestSchema) -> tuple[Response, int]:
     existing_user: User = User.query.filter(
         and_(User.username == body.username, User.email == body.email)
     ).first()

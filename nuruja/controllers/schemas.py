@@ -10,7 +10,15 @@ class BaseSchema(BaseModel):
         allow_population_by_field_name = True
 
 
-class UserSchema(BaseSchema):
+class UserRequestSchema(BaseSchema):
+    username: str
+    email: str
+    phone_number: str
+    address: str
+    is_admin: Optional[bool] = False
+
+
+class UserResponseSchema(BaseSchema):
     id: int
     username: str
     email: str
@@ -20,7 +28,7 @@ class UserSchema(BaseSchema):
 
 
 class AllUsersSchema(BaseSchema):
-    users: Optional[list[UserSchema]]
+    users: Optional[list[UserResponseSchema]]
 
 
 class UserUpdateSchema(BaseSchema):
@@ -31,7 +39,18 @@ class UserUpdateSchema(BaseSchema):
     is_admin: Optional[bool] = False
 
 
-class BookSchema(BaseSchema):
+class BookRequestSchema(BaseSchema):
+    title: str
+    author: str
+    isbn: str
+    date_of_publication: DateTime
+    category: Optional[str]
+    status: str
+    rent_fee: int
+    late_penalty_fee: int
+
+
+class BookResponseSchema(BaseSchema):
     id: int
     title: str
     author: str
@@ -44,7 +63,7 @@ class BookSchema(BaseSchema):
 
 
 class AllBooksSchema(BaseSchema):
-    books: list[BookSchema]
+    books: list[BookResponseSchema]
 
 
 class BorrowBookSchema(BaseSchema):
