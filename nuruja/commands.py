@@ -22,9 +22,10 @@ def create_db(uri: str = configs.POSTGRES_DSN) -> None:
 
 
 def drop_db() -> None:
-    engine = database_engine(uri=configs.POSTGRES_DSN)
-    if database_exists(engine.url):
-        drop_database(engine.url)
+    if click.confirm('Are you sure?', default=False, abort=True):
+        engine = database_engine(uri=configs.POSTGRES_DSN)
+        if database_exists(engine.url):
+            drop_database(engine.url)
 
 
 def create_tables(database: SQLAlchemy = db) -> None:
@@ -33,7 +34,7 @@ def create_tables(database: SQLAlchemy = db) -> None:
 
 
 def drop_tables() -> None:
-    """Drops the database."""
+    """Drops tables."""
     if click.confirm('Are you sure?', default=False, abort=True):
         db.drop_all()
 

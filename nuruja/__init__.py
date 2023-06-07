@@ -21,7 +21,17 @@ def create_app() -> Flask:
 
     @app.route("/", methods=["GET"])
     def index() -> tuple[str, int]:
-        return "Welcome to Nuruja (https://github.com/GichanaMayaka/nuruja)", HTTPStatus.OK
+        return (
+            "Welcome to Nuruja (https://github.com/GichanaMayaka/nuruja)",
+            HTTPStatus.OK,
+        )
+
+    @app.after_request
+    def set_headers(response):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allowed-Methods"] = "GET, POST, PUT, DELETE"
+        response.headers["Content-Type"] = "application/json"
+        return response
 
     return app
 

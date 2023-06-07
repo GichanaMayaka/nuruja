@@ -11,11 +11,16 @@ class BaseSchema(BaseModel):
 
 
 class UserSchema(BaseSchema):
+    id: int
     username: str
     email: str
     phone_number: str
     address: str
     is_admin: Optional[bool] = False
+
+
+class AllUsersSchema(BaseSchema):
+    users: Optional[list[UserSchema]]
 
 
 class UserUpdateSchema(BaseSchema):
@@ -27,6 +32,7 @@ class UserUpdateSchema(BaseSchema):
 
 
 class BookSchema(BaseSchema):
+    id: int
     title: str
     author: str
     isbn: str
