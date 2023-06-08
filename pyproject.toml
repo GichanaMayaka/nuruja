@@ -15,6 +15,7 @@ python-dotenv = "^1.0.0"
 faker = "^18.9.0"
 sqlalchemy-utils = "^0.41.1"
 psycopg2-binary = "^2.9.6"
+flask-cors = "^3.0.10"
 
 
 [build-system]

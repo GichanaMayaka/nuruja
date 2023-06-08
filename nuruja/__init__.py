@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import Flask
 
 from .commands import create_db, drop_db, create_tables, drop_tables, recreate_tables
-from .extensions import db
+from .extensions import db, cors
 from .models import User
 from .controllers.users import users
 from .controllers.books import books
@@ -31,7 +31,9 @@ def create_app() -> Flask:
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
         response.headers["Content-Type"] = "application/json"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers[
+            "Access-Control-Allow-Headers"
+        ] = "Origin, Content-Type, Authorization"
         return response
 
     return app
@@ -39,6 +41,7 @@ def create_app() -> Flask:
 
 def register_extensions(app: Flask) -> None:
     db.init_app(app)
+    cors.init_app(app)
 
 
 def register_commands(app: Flask) -> None:

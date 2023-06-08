@@ -6,17 +6,12 @@ from flask_pydantic import validate
 from sqlalchemy import and_
 
 from ..models import User
-from .schemas import (
-    AllUsersSchema,
-    UserResponseSchema,
-    UserUpdateSchema,
-    UserRequestSchema,
-)
+from .schemas import AllUsersSchema, UserRequestSchema, UserResponseSchema
 
 users = Blueprint("users", __name__)
 
 
-@users.route("/users", methods=["GET"])
+@users.route("/members", methods=["GET"])
 def get_all_users():
     all_users = User.query.all()
 
@@ -26,7 +21,7 @@ def get_all_users():
     return jsonify(details="No Users"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/users", methods=["POST"])
+@users.route("/members/new", methods=["POST"])
 @validate(body=UserResponseSchema)
 def add_user(body: UserRequestSchema) -> tuple[Response, int]:
     existing_user: User = User.query.filter(
@@ -59,7 +54,7 @@ def add_user(body: UserRequestSchema) -> tuple[Response, int]:
     return jsonify(details="User added successfully"), HTTPStatus.CREATED
 
 
-@users.route("/users/<user_id>", methods=["GET"])
+@users.route("/members/<user_id>", methods=["GET"])
 def get_single_single(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -77,7 +72,7 @@ def get_single_single(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/users/<user_id>", methods=["DELETE"])
+@users.route("/members/<user_id>/delete", methods=["DELETE"])
 def remove_single_user(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -89,9 +84,9 @@ def remove_single_user(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not Found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/users/<user_id>", methods=["PUT"])
-@validate(body=UserUpdateSchema)
-def update_single_user(user_id: int, body: UserUpdateSchema) -> tuple[Response, int]:
+@users.route("/members/<user_id>", methods=["PUT"])
+@validate(body=UserRequestSchema)
+def update_single_user(user_id: int, body: UserRequestSchema) -> tuple[Response, int]:
     user_to_update = User.query.filter(User.id == user_id).first()
 
     if user_to_update:

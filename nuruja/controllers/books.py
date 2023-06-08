@@ -58,7 +58,7 @@ def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int
     return jsonify(details="Book not Found"), HTTPStatus.NOT_FOUND
 
 
-@books.route("/books/<book_id>", methods=["DELETE"])
+@books.route("/books/<book_id>/delete", methods=["DELETE"])
 def remove_book(book_id: int) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
 
