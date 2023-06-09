@@ -5,25 +5,25 @@ from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_
 
+from .schemas import AllMembersSchema, MemberRequestSchema, MemberResponseSchema
 from ..models import User
-from .schemas import AllUsersSchema, UserRequestSchema, UserResponseSchema
 
-users = Blueprint("users", __name__)
+users = Blueprint("members", __name__)
 
 
 @users.route("/members", methods=["GET"])
-def get_all_users():
+def get_all_members():
     all_users = User.query.all()
 
     if all_users:
-        return AllUsersSchema(users=all_users).dict(), HTTPStatus.OK
+        return AllMembersSchema(members=all_users).dict(), HTTPStatus.OK
 
     return jsonify(details="No Users"), HTTPStatus.NOT_FOUND
 
 
 @users.route("/members/new", methods=["POST"])
-@validate(body=UserResponseSchema)
-def add_user(body: UserRequestSchema) -> tuple[Response, int]:
+@validate(body=MemberResponseSchema)
+def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
     existing_user: User = User.query.filter(
         and_(User.username == body.username, User.email == body.email)
     ).first()
@@ -55,7 +55,7 @@ def add_user(body: UserRequestSchema) -> tuple[Response, int]:
 
 
 @users.route("/members/<user_id>", methods=["GET"])
-def get_single_single(user_id: int) -> tuple[Response, int]:
+def get_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
     if user:
@@ -73,7 +73,7 @@ def get_single_single(user_id: int) -> tuple[Response, int]:
 
 
 @users.route("/members/<user_id>/delete", methods=["DELETE"])
-def remove_single_user(user_id: int) -> tuple[Response, int]:
+def remove_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
     if user:
@@ -85,8 +85,10 @@ def remove_single_user(user_id: int) -> tuple[Response, int]:
 
 
 @users.route("/members/<user_id>", methods=["PUT"])
-@validate(body=UserRequestSchema)
-def update_single_user(user_id: int, body: UserRequestSchema) -> tuple[Response, int]:
+@validate(body=MemberRequestSchema)
+def update_single_member(
+    user_id: int, body: MemberRequestSchema
+) -> tuple[Response, int]:
     user_to_update = User.query.filter(User.id == user_id).first()
 
     if user_to_update:

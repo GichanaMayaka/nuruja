@@ -1,13 +1,14 @@
 import pendulum
 
 from .mixins import CRUDMixin
-from .. import db
+from ..extensions import db
 
 
 class User(db.Model, CRUDMixin):
     """
     Represents a user
     """
+
     __tablename__ = "user"
 
     username = db.Column(db.String(20), nullable=False, unique=True)
@@ -30,8 +31,12 @@ class Book(db.Model, CRUDMixin):
     title = db.Column(db.String(100), nullable=False, unique=False)
     author = db.Column(db.String(120), nullable=False, unique=False)
     isbn = db.Column(db.String(120), nullable=False, unique=True)
-    date_of_publication = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now)
-    status = db.Column(db.String(15), nullable=False, unique=False, default="not-rented")
+    date_of_publication = db.Column(
+        db.DateTime, nullable=False, unique=False, default=pendulum.now
+    )
+    status = db.Column(
+        db.String(15), nullable=False, unique=False, default="not-rented"
+    )
     rent_fee = db.Column(db.Integer, nullable=False, unique=False, default=100)
     late_penalty_fee = db.Column(db.Integer, nullable=False, unique=False, default=25)
 
@@ -80,8 +85,15 @@ class Transactions(db.Model, CRUDMixin):
 
     rent_fee = db.Column(db.Float, default=100, nullable=False, unique=False)
     is_return = db.Column(db.Boolean, default=False, nullable=False, unique=False)
-    date_borrowed = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now)
-    date_due = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now() + pendulum.duration(days=14))
+    date_borrowed = db.Column(
+        db.DateTime, nullable=False, unique=False, default=pendulum.now
+    )
+    date_due = db.Column(
+        db.DateTime,
+        nullable=False,
+        unique=False,
+        default=pendulum.now() + pendulum.duration(days=14),
+    )
 
     # Foreign Key[s]
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -97,7 +109,9 @@ class UserBalance(db.Model, CRUDMixin):
     __tablename__ = "user_balance"
 
     balance = db.Column(db.Float, nullable=False, unique=False, default=0)
-    date_of_entry = db.Column(db.DateTime, nullable=False, unique=False, default=pendulum.now)
+    date_of_entry = db.Column(
+        db.DateTime, nullable=False, unique=False, default=pendulum.now
+    )
 
     # Foreign Key[s]
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))

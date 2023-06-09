@@ -10,7 +10,7 @@ class BaseSchema(BaseModel):
         allow_population_by_field_name = True
 
 
-class UserRequestSchema(BaseSchema):
+class MemberRequestSchema(BaseSchema):
     username: str
     email: str
     phone_number: str
@@ -18,12 +18,12 @@ class UserRequestSchema(BaseSchema):
     is_admin: Optional[bool] = False
 
 
-class UserResponseSchema(UserRequestSchema):
+class MemberResponseSchema(MemberRequestSchema):
     id: int
 
 
-class AllUsersSchema(BaseSchema):
-    users: Optional[list[UserResponseSchema]]
+class AllMembersSchema(BaseSchema):
+    members: Optional[list[MemberResponseSchema]]
 
 
 class BookRequestSchema(BaseSchema):

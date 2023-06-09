@@ -3,11 +3,11 @@ from http import HTTPStatus
 from flask import Flask
 
 from .commands import create_db, drop_db, create_tables, drop_tables, recreate_tables
-from .extensions import db, cors
-from .models import User
-from .controllers.users import users
 from .controllers.books import books
 from .controllers.transactions import transactions
+from .controllers.users import users
+from .extensions import db, cors
+from .models import User
 from ..configs import configs
 
 

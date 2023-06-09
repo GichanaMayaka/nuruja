@@ -89,3 +89,23 @@ def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response
         return jsonify(details="Book updated successfully"), HTTPStatus.ACCEPTED
 
     return jsonify(details="Book not Found"), HTTPStatus.NOT_FOUND
+
+
+@books.route("/books/available", methods={"GET"})
+def get_available_books() -> tuple[Response, HTTPStatus]:
+    available_books = Book.query.filter(Book.status == "not-rented").all()
+
+    if available_books:
+        return AllBooksSchema(books=available_books).dict(), HTTPStatus.OK
+
+    return jsonify(details="No Books Available"), HTTPStatus.NOT_FOUND
+
+
+@books.route("/books/unavailable", methods=["GET"])
+def get_unavailable_books() -> tuple[Response, HTTPStatus]:
+    unavailable_books = Book.query.filter(Book.status == "rented").all()
+
+    if unavailable_books:
+        return AllBooksSchema(books=unavailable_books).dict(), HTTPStatus.OK
+
+    return jsonify(details="No Books Rented Out"), HTTPStatus.NOT_FOUND
