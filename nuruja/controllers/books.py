@@ -4,10 +4,15 @@ from typing import Union
 from flask import Blueprint, jsonify
 from flask.wrappers import Response
 from flask_pydantic import validate
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 
-from ..models import Book
-from .schemas import AllBooksSchema, BookRequestSchema, BookResponseSchema
+from .schemas import (
+    AllBooksSchema,
+    BookRequestSchema,
+    BookResponseSchema,
+    UnavailableBooks,
+)
+from ..models import Book, Transactions, User
 
 books = Blueprint("books", __name__)
 
@@ -92,7 +97,7 @@ def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response
 
 
 @books.route("/books/available", methods={"GET"})
-def get_available_books() -> tuple[Response, HTTPStatus]:
+def get_available_books() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatus]:
     available_books = Book.query.filter(Book.status == "not-rented").all()
 
     if available_books:
@@ -102,10 +107,29 @@ def get_available_books() -> tuple[Response, HTTPStatus]:
 
 
 @books.route("/books/unavailable", methods=["GET"])
-def get_unavailable_books() -> tuple[Response, HTTPStatus]:
-    unavailable_books = Book.query.filter(Book.status == "rented").all()
+def get_unavailable_books() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatus]:
+    unavailable_books = (
+        Transactions.query.join(User, User.id == Transactions.user_id)
+        .join(Book, Book.id == Transactions.book_id)
+        .filter(and_(Book.status == "rented", Transactions.is_return == False))
+        .with_entities(
+            User.id,
+            User.username,
+            Book.title,
+            Book.rent_fee,
+            Book.status,
+            Book.late_penalty_fee,
+            Book.author,
+            Book.isbn,
+            Transactions.date_borrowed,
+            Transactions.date_due,
+            Transactions.book_id,
+        )
+        .order_by(desc(Transactions.date_borrowed))
+        .all()
+    )
 
     if unavailable_books:
-        return AllBooksSchema(books=unavailable_books).dict(), HTTPStatus.OK
+        return UnavailableBooks(books=unavailable_books).dict(), HTTPStatus.OK
 
     return jsonify(details="No Books Rented Out"), HTTPStatus.NOT_FOUND

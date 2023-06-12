@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Final
 
 import pendulum
 from flask import Blueprint, jsonify
@@ -8,7 +7,7 @@ from flask_pydantic import validate
 from sqlalchemy import and_, desc
 
 from .schemas import BorrowBookSchema
-from ..models import Transactions, User, Book, UserBalance
+from ..models import Book, Transactions, User, UserBalance
 
 transactions = Blueprint("transactions", __name__)
 

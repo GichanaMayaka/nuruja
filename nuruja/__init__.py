@@ -2,11 +2,13 @@ from http import HTTPStatus
 
 from flask import Flask
 
-from .commands import create_db, drop_db, create_tables, drop_tables, recreate_tables
+from .commands import (create_db, create_tables, drop_db, drop_tables,
+                       recreate_tables)
+from .controllers.balances import balances
 from .controllers.books import books
 from .controllers.transactions import transactions
 from .controllers.users import users
-from .extensions import db, cors
+from .extensions import cors, db
 from .models import User
 from ..configs import configs
 
@@ -53,3 +55,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(users)
     app.register_blueprint(books)
     app.register_blueprint(transactions)
+    app.register_blueprint(balances)
