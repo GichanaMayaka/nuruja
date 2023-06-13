@@ -3,8 +3,8 @@ from http import HTTPStatus
 from flask import Blueprint, Response, jsonify
 from sqlalchemy import text
 
-from .schemas import UserBalances
 from ..extensions import db
+from .schemas import UserBalances
 
 balances = Blueprint("balances", __name__)
 
@@ -17,7 +17,7 @@ def get_all_user_balances() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPSta
                 SELECT *, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY date_of_entry DESC) row_nums
                     FROM user_balance
             )
-            SELECT c.id, user_id, u.username, balance, date_of_entry 
+            SELECT c.id, c.user_id, u.username, c.balance, c.date_of_entry 
                 FROM cte c INNER JOIN public.user u ON c.user_id = u.id
                     WHERE c.row_nums = 1
         """
@@ -28,4 +28,4 @@ def get_all_user_balances() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPSta
     if user_balances:
         return UserBalances(balances=user_balances).dict(), HTTPStatus.OK
 
-    return jsonify(details="Found"), HTTPStatus.NOT_FOUND
+    return jsonify(details="Not Found."), HTTPStatus.NOT_FOUND

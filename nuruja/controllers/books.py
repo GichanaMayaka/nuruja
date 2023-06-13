@@ -4,15 +4,16 @@ from typing import Union
 from flask import Blueprint, jsonify
 from flask.wrappers import Response
 from flask_pydantic import validate
-from sqlalchemy import and_, desc
+from sqlalchemy import and_, text
 
+from ..extensions import db
+from ..models import Book
 from .schemas import (
     AllBooksSchema,
     BookRequestSchema,
     BookResponseSchema,
     UnavailableBooks,
 )
-from ..models import Book, Transactions, User
 
 books = Blueprint("books", __name__)
 
@@ -53,7 +54,7 @@ def get_all_books() -> Union[tuple[dict, int], tuple[Response, int]]:
     return jsonify(details="Book[s] not Found"), HTTPStatus.NOT_FOUND
 
 
-@books.route("/books/<book_id>", methods=["GET"])
+@books.route("/books/<int:book_id>", methods=["GET"])
 def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int]]:
     book = Book.query.filter(Book.id == book_id).first()
 
@@ -63,7 +64,7 @@ def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int
     return jsonify(details="Book not Found"), HTTPStatus.NOT_FOUND
 
 
-@books.route("/books/<book_id>/delete", methods=["DELETE"])
+@books.route("/books/<int:book_id>/delete", methods=["DELETE"])
 def remove_book(book_id: int) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
 
@@ -75,7 +76,7 @@ def remove_book(book_id: int) -> tuple[Response, int]:
     return jsonify(details="Book not Found"), HTTPStatus.NOT_FOUND
 
 
-@books.route("/books/<book_id>", methods=["PUT"])
+@books.route("/books/<int:book_id>", methods=["PUT"])
 @validate(body=BookRequestSchema)
 def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response, int]:
     book = Book.query.filter(Book.id == book_id).first()
@@ -108,26 +109,24 @@ def get_available_books() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatu
 
 @books.route("/books/unavailable", methods=["GET"])
 def get_unavailable_books() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatus]:
-    unavailable_books = (
-        Transactions.query.join(User, User.id == Transactions.user_id)
-        .join(Book, Book.id == Transactions.book_id)
-        .filter(and_(Book.status == "rented", Transactions.is_return == False))
-        .with_entities(
-            User.id,
-            User.username,
-            Book.title,
-            Book.rent_fee,
-            Book.status,
-            Book.late_penalty_fee,
-            Book.author,
-            Book.isbn,
-            Transactions.date_borrowed,
-            Transactions.date_due,
-            Transactions.book_id,
+    query = text(
+        """
+        WITH cte AS (
+            SELECT *,Row_number() over (PARTITION BY book_id ORDER BY date_borrowed DESC) row_nums
+                FROM transactions
         )
-        .order_by(desc(Transactions.date_borrowed))
-        .all()
+        
+        SELECT b.title, b.status, u.username, c.date_borrowed, c.date_due, c.is_return, b.date_of_publication, c.id,
+            b.rent_fee, b.late_penalty_fee, b.author, b.isbn, c.book_id, c.user_id
+            FROM cte c inner join book b ON c.book_id = b.id
+                INNER join public.USER u ON u.id = c.user_id
+                WHERE c.row_nums = 1 AND c.is_return = FALSE
+                    AND b.status = 'rented'
+                ORDER BY b.title DESC
+        """
     )
+
+    unavailable_books = db.session.execute(query).fetchall()
 
     if unavailable_books:
         return UnavailableBooks(books=unavailable_books).dict(), HTTPStatus.OK

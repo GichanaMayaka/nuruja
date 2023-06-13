@@ -59,9 +59,11 @@ class UnavailableBook(BaseSchema):
     late_penalty_fee: int
     author: str
     isbn: int
-    date_borrowed: datetime.datetime
-    date_due: datetime.datetime
+    date_borrowed: DateTime
+    date_due: DateTime
     book_id: int
+    date_of_publication: datetime.datetime
+    user_id: int
 
 
 class UnavailableBooks(BaseSchema):
@@ -73,7 +75,7 @@ class UserBalance(BaseSchema):
     user_id: int
     username: str
     balance: int
-    date_of_entry: datetime.datetime
+    date_of_entry: DateTime
 
 
 class UserBalances(BaseSchema):

@@ -6,13 +6,13 @@ from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_, desc
 
-from .schemas import BorrowBookSchema
 from ..models import Book, Transactions, User, UserBalance
+from .schemas import BorrowBookSchema
 
 transactions = Blueprint("transactions", __name__)
 
 
-@transactions.route("/members/<user_id>/borrow", methods=["POST"])
+@transactions.route("/members/<int:user_id>/borrow", methods=["POST"])
 @validate(body=BorrowBookSchema)
 def initiate_borrow(
     user_id: int, body: BorrowBookSchema
@@ -74,11 +74,12 @@ def initiate_borrow(
         )
 
 
-@transactions.route("/members/<user_id>/return", methods=["POST"])
+@transactions.route("/members/<int:user_id>/return", methods=["POST"])
 @validate(body=BorrowBookSchema)
 def initiate_book_return(
     user_id: int, body: BorrowBookSchema
 ) -> tuple[Response, HTTPStatus]:
+    # TODO: Fix instances of negative balances when initiating a return on an already returned book
     user = User.get_by_id(user_id)
     book = Book.query.filter(
         and_(Book.id == body.book_id, Book.status == "rented")
