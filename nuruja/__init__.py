@@ -7,7 +7,7 @@ from .commands import (create_db, create_tables, drop_db, drop_tables,
 from .controllers.balances import balances
 from .controllers.books import books
 from .controllers.transactions import transactions
-from .controllers.users import users
+from .controllers.members import users
 from .extensions import cors, db
 from .models import User
 from ..configs import configs

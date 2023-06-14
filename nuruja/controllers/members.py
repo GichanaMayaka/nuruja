@@ -54,7 +54,7 @@ def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
     return jsonify(details="User added successfully"), HTTPStatus.CREATED
 
 
-@users.route("/members/<user_id>", methods=["GET"])
+@users.route("/members/<int:user_id>", methods=["GET"])
 def get_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -72,7 +72,7 @@ def get_single_member(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/members/<user_id>/delete", methods=["DELETE"])
+@users.route("/members/<int:user_id>/delete", methods=["DELETE"])
 def remove_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -84,7 +84,7 @@ def remove_single_member(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not Found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/members/<user_id>", methods=["PUT"])
+@users.route("/members/<int:user_id>", methods=["PUT"])
 @validate(body=MemberRequestSchema)
 def update_single_member(
     user_id: int, body: MemberRequestSchema
