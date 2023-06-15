@@ -6,14 +6,14 @@ from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_, text
 
-from ..extensions import db
-from ..models import Book
 from .schemas import (
     AllBooksSchema,
     BookRequestSchema,
     BookResponseSchema,
     UnavailableBooks,
 )
+from ..extensions import db
+from ..models import Book
 
 books = Blueprint("books", __name__)
 
@@ -112,14 +112,14 @@ def get_unavailable_books() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPSta
     query = text(
         """
         WITH cte AS (
-            SELECT *,Row_number() over (PARTITION BY book_id ORDER BY date_borrowed DESC) row_nums
+            SELECT *,ROW_NUMBER() OVER (PARTITION BY book_id ORDER BY date_borrowed DESC) row_nums
                 FROM transactions
         )
         
         SELECT b.title, b.status, u.username, c.date_borrowed, c.date_due, c.is_return, b.date_of_publication, c.id,
             b.rent_fee, b.late_penalty_fee, b.author, b.isbn, c.book_id, c.user_id
             FROM cte c inner join book b ON c.book_id = b.id
-                INNER join public.USER u ON u.id = c.user_id
+                INNER JOIN public.USER u ON u.id = c.user_id
                 WHERE c.row_nums = 1 AND c.is_return = FALSE
                     AND b.status = 'rented'
                 ORDER BY b.title DESC

@@ -6,9 +6,9 @@ from .commands import (create_db, create_tables, drop_db, drop_tables,
                        recreate_tables)
 from .controllers.balances import balances
 from .controllers.books import books
-from .controllers.transactions import transactions
 from .controllers.members import users
-from .extensions import cors, db
+from .controllers.transactions import transactions
+from .extensions import cors, db, migrations
 from .models import User
 from ..configs import configs
 
@@ -44,6 +44,7 @@ def create_app() -> Flask:
 def register_extensions(app: Flask) -> None:
     db.init_app(app)
     cors.init_app(app)
+    migrations.init_app(app, db)
 
 
 def register_commands(app: Flask) -> None:
