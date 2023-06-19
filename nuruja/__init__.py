@@ -1,3 +1,4 @@
+import sys
 from http import HTTPStatus
 
 from flask import Flask
@@ -12,6 +13,8 @@ from .controllers.transactions import transactions
 from .extensions import cors, db, migrations
 from .models import User
 from ..configs import configs
+
+sys.path.append("..")
 
 
 def create_app() -> Flask:
