@@ -11,12 +11,12 @@ from .controllers.search import search
 from .controllers.transactions import transactions
 from .extensions import cors, db, migrations
 from .models import User
-from ..configs import configs
+from .. import configs
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = configs.POSTGRES_DSN
+    app.config["SQLALCHEMY_DATABASE_URI"] = configs.configs.POSTGRES_DSN
 
     register_commands(app)
     register_extensions(app)
