@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from flask import Flask
 
-from configs import configs
+from nuruja.configs import configs
 from nuruja.nuruja.commands import (create_db, create_tables, drop_db, drop_tables,
                                     recreate_tables)
 from nuruja.nuruja.controllers.balances import balances
@@ -16,7 +16,7 @@ from nuruja.nuruja.models import User
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = configs.configs.POSTGRES_DSN
+    app.config["SQLALCHEMY_DATABASE_URI"] = configs.POSTGRES_DSN
 
     register_commands(app)
     register_extensions(app)
