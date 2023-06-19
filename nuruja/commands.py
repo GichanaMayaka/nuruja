@@ -1,10 +1,11 @@
 import click
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
+from configs import configs
 from .extensions import db
-from ..configs import configs
 
 
 def database_engine(uri: str) -> Engine:

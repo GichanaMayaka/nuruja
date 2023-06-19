@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from flask import Flask
 
+from configs import configs
 from .commands import (create_db, create_tables, drop_db, drop_tables,
                        recreate_tables)
 from .controllers.balances import balances
@@ -11,7 +12,6 @@ from .controllers.search import search
 from .controllers.transactions import transactions
 from .extensions import cors, db, migrations
 from .models import User
-from ..configs import configs
 
 
 def create_app() -> Flask:
