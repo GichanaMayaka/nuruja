@@ -7,6 +7,7 @@ from .commands import (create_db, create_tables, drop_db, drop_tables,
 from .controllers.balances import balances
 from .controllers.books import books
 from .controllers.members import users
+from .controllers.search import search
 from .controllers.transactions import transactions
 from .extensions import cors, db, migrations
 from .models import User
@@ -57,3 +58,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(books)
     app.register_blueprint(transactions)
     app.register_blueprint(balances)
+    app.register_blueprint(search)

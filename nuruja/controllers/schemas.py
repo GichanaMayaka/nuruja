@@ -1,4 +1,3 @@
-import datetime
 from typing import Optional
 
 from pendulum import DateTime
@@ -50,19 +49,11 @@ class BorrowBookSchema(BaseSchema):
     book_id: int
 
 
-class UnavailableBook(BaseSchema):
-    id: int
+class UnavailableBook(BookResponseSchema):
     username: str
-    title: str
-    rent_fee: int
-    status: str
-    late_penalty_fee: int
-    author: str
-    isbn: int
     date_borrowed: DateTime
     date_due: DateTime
     book_id: int
-    date_of_publication: datetime.datetime
     user_id: int
 
 
@@ -80,3 +71,7 @@ class UserBalance(BaseSchema):
 
 class UserBalances(BaseSchema):
     balances: list[UserBalance]
+
+
+class SearchParameters(BaseSchema):
+    parameters: str = ""
