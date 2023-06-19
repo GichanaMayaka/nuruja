@@ -6,7 +6,7 @@ from .commands import (create_db, create_tables, drop_db, drop_tables,
                        recreate_tables)
 from .controllers.balances import balances
 from .controllers.books import books
-from .controllers.members import users
+from .controllers.members import members
 from .controllers.search import search
 from .controllers.transactions import transactions
 from .extensions import cors, db, migrations
@@ -54,7 +54,7 @@ def register_commands(app: Flask) -> None:
 
 
 def register_blueprints(app: Flask) -> None:
-    app.register_blueprint(users)
+    app.register_blueprint(members)
     app.register_blueprint(books)
     app.register_blueprint(transactions)
     app.register_blueprint(balances)

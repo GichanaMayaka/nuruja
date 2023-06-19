@@ -8,10 +8,10 @@ from sqlalchemy import and_
 from .schemas import AllMembersSchema, MemberRequestSchema, MemberResponseSchema
 from ..models import User
 
-users = Blueprint("members", __name__)
+members = Blueprint("members", __name__)
 
 
-@users.route("/members", methods=["GET"])
+@members.route("/members", methods=["GET"])
 def get_all_members():
     all_users = User.query.all()
 
@@ -21,7 +21,7 @@ def get_all_members():
     return jsonify(details="No Users"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/members/new", methods=["POST"])
+@members.route("/members/new", methods=["POST"])
 @validate(body=MemberResponseSchema)
 def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
     existing_user: User = User.query.filter(
@@ -54,7 +54,7 @@ def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
     return jsonify(details="User added successfully"), HTTPStatus.CREATED
 
 
-@users.route("/members/<int:user_id>", methods=["GET"])
+@members.route("/members/<int:user_id>", methods=["GET"])
 def get_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -72,7 +72,7 @@ def get_single_member(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/members/<int:user_id>/delete", methods=["DELETE"])
+@members.route("/members/<int:user_id>/delete", methods=["DELETE"])
 def remove_single_member(user_id: int) -> tuple[Response, int]:
     user = User.query.filter(User.id == user_id).first()
 
@@ -84,7 +84,7 @@ def remove_single_member(user_id: int) -> tuple[Response, int]:
     return jsonify(details="User not Found"), HTTPStatus.NOT_FOUND
 
 
-@users.route("/members/<int:user_id>", methods=["PUT"])
+@members.route("/members/<int:user_id>", methods=["PUT"])
 @validate(body=MemberRequestSchema)
 def update_single_member(
     user_id: int, body: MemberRequestSchema
