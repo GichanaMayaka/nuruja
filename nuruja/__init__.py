@@ -2,15 +2,15 @@ from http import HTTPStatus
 
 from flask import Flask
 
-from nuruja.nuruja.commands import (create_db, create_tables, drop_db, drop_tables,
-                                    recreate_tables)
-from nuruja.nuruja.controllers.balances import balances
-from nuruja.nuruja.controllers.books import books
-from nuruja.nuruja.controllers.members import members
-from nuruja.nuruja.controllers.search import search
-from nuruja.nuruja.controllers.transactions import transactions
-from nuruja.nuruja.extensions import db, cors, migrations
-from nuruja.nuruja.models import User
+from .commands import (create_db, create_tables, drop_db, drop_tables,
+                       recreate_tables)
+from .controllers.balances import balances
+from .controllers.books import books
+from .controllers.members import members
+from .controllers.search import search
+from .controllers.transactions import transactions
+from .extensions import cors, db, migrations
+from .models import User
 from ..configs import configs
 
 
