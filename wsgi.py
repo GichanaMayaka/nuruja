@@ -1,4 +1,4 @@
-from .nuruja import create_app
+from nuruja.nuruja import create_app
 
 
 app = create_app()
