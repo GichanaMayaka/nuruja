@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from flask import Flask
 
-from nuruja.configs import configs
 from nuruja.nuruja.commands import (create_db, create_tables, drop_db, drop_tables,
                                     recreate_tables)
 from nuruja.nuruja.controllers.balances import balances
@@ -12,6 +11,7 @@ from nuruja.nuruja.controllers.search import search
 from nuruja.nuruja.controllers.transactions import transactions
 from nuruja.nuruja.extensions import db, cors, migrations
 from nuruja.nuruja.models import User
+from ..configs import configs
 
 
 def create_app() -> Flask:
