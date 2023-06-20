@@ -1,10 +1,13 @@
 from http import HTTPStatus
 
+import pendulum
 from flask import Blueprint, Response, jsonify
+from flask_pydantic import validate
 from sqlalchemy import text
 
+from .schemas import UserBalances, ClearUserBalancesSchema
 from ..extensions import db
-from .schemas import UserBalances
+from ..models import User, UserBalance
 
 balances = Blueprint("balances", __name__)
 
@@ -29,3 +32,21 @@ def get_all_user_balances() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPSta
         return UserBalances(balances=user_balances).dict(), HTTPStatus.OK
 
     return jsonify(details="Not Found."), HTTPStatus.NOT_FOUND
+
+
+@balances.route("/balances/clear", methods=["POST"])
+@validate(body=ClearUserBalancesSchema)
+def clear_user_balances(body: ClearUserBalancesSchema) -> tuple[Response, HTTPStatus]:
+    user = User.get_by_id(body.user_id)
+
+    if user:
+        user_balance = UserBalance.create(
+            balance=0,
+            date_of_entry=pendulum.now(),
+            user_id=user.id
+        )
+
+        user_balance.save()
+        return jsonify(details="Balance Cleared"), HTTPStatus.ACCEPTED
+
+    return jsonify(details="User not Found"), HTTPStatus.NOT_FOUND

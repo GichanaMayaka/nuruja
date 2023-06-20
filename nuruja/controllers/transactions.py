@@ -1,13 +1,14 @@
 from http import HTTPStatus
 
 import pendulum
+import pytz
 from flask import Blueprint, jsonify
 from flask.wrappers import Response
 from flask_pydantic import validate
 from sqlalchemy import and_, desc
 
-from ..models import Book, Transactions, User, UserBalance
 from .schemas import BorrowBookSchema
+from ..models import Book, Transactions, User, UserBalance
 
 transactions = Blueprint("transactions", __name__)
 
@@ -15,7 +16,7 @@ transactions = Blueprint("transactions", __name__)
 @transactions.route("/members/<int:user_id>/borrow", methods=["POST"])
 @validate(body=BorrowBookSchema)
 def initiate_borrow(
-    user_id: int, body: BorrowBookSchema
+        user_id: int, body: BorrowBookSchema
 ) -> tuple[Response, HTTPStatus]:
     user = User.get_by_id(user_id)
     book = Book.query.filter(
@@ -39,13 +40,20 @@ def initiate_borrow(
         )
 
         if previous_balance:
-            new_balance = UserBalance.create(
-                user_id=user.id,
-                balance=(previous_balance.balance + book.rent_fee),
-                date_of_entry=pendulum.now(),
-                transaction_id=new_borrow.id,
-            )
-            new_balance.save()
+            new_amount = (previous_balance.balance + book.rent_fee)
+
+            if new_amount <= 500:
+                new_balance = UserBalance.create(
+                    user_id=user.id,
+                    balance=new_amount,
+                    date_of_entry=pendulum.now(),
+                    transaction_id=new_borrow.id,
+                )
+                new_balance.save()
+
+            else:
+                return jsonify(
+                    details="Balance is/will be above cut-off. Cannot rent to member"), HTTPStatus.NOT_ACCEPTABLE
 
         else:
             new_balance = UserBalance.create(
@@ -77,18 +85,18 @@ def initiate_borrow(
 @transactions.route("/members/<int:user_id>/return", methods=["POST"])
 @validate(body=BorrowBookSchema)
 def initiate_book_return(
-    user_id: int, body: BorrowBookSchema
+        user_id: int, body: BorrowBookSchema
 ) -> tuple[Response, HTTPStatus]:
-    # TODO: Fix instances of negative balances when initiating a return on an already returned book
     user = User.get_by_id(user_id)
     book = Book.query.filter(
         and_(Book.id == body.book_id, Book.status == "rented")
     ).first()
+    utc = pytz.UTC
 
     if user and book:
         initial_borrow = Transactions.query.filter(
-            and_(Transactions.book_id == book.id, Transactions.user_id == user.id)
-        ).first()
+            and_(Transactions.book_id == book.id, Transactions.user_id == user.id, Transactions.is_return == False)
+        ).order_by(desc(Transactions.date_borrowed)).first()
 
         previous_balance = (
             UserBalance.query.filter(UserBalance.user_id == user.id)
@@ -97,7 +105,7 @@ def initiate_book_return(
         )
 
         # If late to return
-        if pendulum.now().timestamp() > initial_borrow.date_due.timestamp():
+        if pendulum.now().replace(tzinfo=utc) > initial_borrow.date_due.replace(tzinfo=utc):
             late_return = Transactions.create(
                 user_id=user.id,
                 book_id=book.id,
@@ -107,30 +115,19 @@ def initiate_book_return(
                 date_due=pendulum.now(),
             )
 
-            if previous_balance:
-                new_balance = UserBalance.create(
-                    user_id=user.id,
-                    balance=(previous_balance.balance + book.late_penalty_fee),
-                    date_of_entry=pendulum.now(),
-                    transaction_id=late_return.id,
-                )
-                new_balance.save()
-
-            else:
-                new_balance = UserBalance.create(
-                    user_id=user.id,
-                    balance=book.late_penalty_fee,
-                    date_of_entry=pendulum.now(),
-                    transaction_id=late_return.id,
-                )
-                new_balance.save()
+            new_balance = UserBalance.create(
+                user_id=user.id,
+                balance=((previous_balance.balance - book.rent_fee) + book.late_penalty_fee),
+                date_of_entry=pendulum.now(),
+                transaction_id=late_return.id,
+            )
 
             book.update(status="not-rented")
+            new_balance.save()
             late_return.save()
 
             return (
-                jsonify(details="Late return noted. Fee of 100 applied"),
-                HTTPStatus.OK,
+                jsonify(details=f"Late return noted. Fee of {book.late_penalty_fee} applied"), HTTPStatus.OK,
             )
 
         # If returning on time

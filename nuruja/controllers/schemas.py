@@ -73,5 +73,9 @@ class UserBalances(BaseSchema):
     balances: list[UserBalance]
 
 
+class ClearUserBalancesSchema(BaseSchema):
+    user_id: int
+
+
 class SearchParameters(BaseSchema):
     parameters: str = ""
