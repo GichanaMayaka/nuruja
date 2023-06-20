@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from flask import Flask
+from pydantic import PostgresDsn
 
 from configs import configs
 from .commands import (create_db, create_tables, drop_db, drop_tables,
@@ -14,9 +15,10 @@ from .extensions import cors, db, migrations
 from .models import User
 
 
-def create_app() -> Flask:
+def create_app(database_url: PostgresDsn = configs.POSTGRES_DSN) -> Flask:
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = configs.POSTGRES_DSN
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    app.config["SECRET_KEY"] = configs.SECRET_KEY
 
     register_commands(app)
     register_extensions(app)
