@@ -31,7 +31,6 @@ class BookRequestSchema(BaseSchema):
     author: str
     isbn: str
     date_of_publication: DateTime
-    category: Optional[str]
     status: str
     rent_fee: int
     late_penalty_fee: int

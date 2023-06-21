@@ -12,7 +12,7 @@ members = Blueprint("members", __name__)
 
 
 @members.route("/members", methods=["GET"])
-def get_all_members():
+def get_all_members() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatus]:
     all_users = User.query.all()
 
     if all_users:
@@ -23,7 +23,7 @@ def get_all_members():
 
 @members.route("/members/new", methods=["POST"])
 @validate(body=MemberResponseSchema)
-def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
+def add_member(body: MemberRequestSchema) -> tuple[Response, HTTPStatus]:
     existing_user: User = User.query.filter(
         and_(User.username == body.username, User.email == body.email)
     ).first()
@@ -55,25 +55,17 @@ def add_member(body: MemberRequestSchema) -> tuple[Response, int]:
 
 
 @members.route("/members/<int:user_id>", methods=["GET"])
-def get_single_member(user_id: int) -> tuple[Response, int]:
+def get_single_member(user_id: int) -> tuple[dict, HTTPStatus] | tuple[Response, HTTPStatus]:
     user = User.query.filter(User.id == user_id).first()
 
     if user:
-        return (
-            jsonify(
-                username=user.username,
-                email=user.email,
-                address=user.address,
-                phone_number=user.phone_number,
-            ),
-            HTTPStatus.OK,
-        )
+        return MemberResponseSchema.from_orm(user).dict(), HTTPStatus.OK,
 
     return jsonify(details="User not found"), HTTPStatus.NOT_FOUND
 
 
 @members.route("/members/<int:user_id>/delete", methods=["DELETE"])
-def remove_single_member(user_id: int) -> tuple[Response, int]:
+def remove_single_member(user_id: int) -> tuple[Response, HTTPStatus]:
     user = User.query.filter(User.id == user_id).first()
 
     if user:
@@ -87,7 +79,7 @@ def remove_single_member(user_id: int) -> tuple[Response, int]:
 @members.route("/members/<int:user_id>", methods=["PUT"])
 @validate(body=MemberRequestSchema)
 def update_single_member(
-    user_id: int, body: MemberRequestSchema
+        user_id: int, body: MemberRequestSchema
 ) -> tuple[Response, int]:
     user_to_update = User.query.filter(User.id == user_id).first()
 
