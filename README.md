@@ -35,19 +35,19 @@ Below are all the exposed endpoints
 
 ## Books Endpoint
 
-### Get All Books
+### Get all Books
 
 ```bash
 curl -X GET http://127.0.0.1/books
 ```
 
-### Get One Book by Id
+### Get a Book by Id
 
 ```bash
 curl -X GET http://127.0.0.1/books/<int:book_id>
 ```
 
-### Add A Book
+### Add a Book
 
 ```bash
 curl -X POST http://127.0.0.1/books \
@@ -63,7 +63,7 @@ curl -X POST http://127.0.0.1/books \
 }'
 ```
 
-### Edit/Update An Existing Book by Id
+### Edit/Update an Existing Book by Id
 
 ```bash
 curl -X PUT http://127.0.0.1/books/<int:book_id> \
@@ -79,7 +79,7 @@ curl -X PUT http://127.0.0.1/books/<int:book_id> \
 }'
 ```
 
-### Delete A Book by Id
+### Delete a Book by Id
 
 ```bash
 curl -X DELETE http://127.0.0.1/books/<int:book_id>
@@ -87,19 +87,19 @@ curl -X DELETE http://127.0.0.1/books/<int:book_id>
 
 ## Members Endpoint
 
-### Get All Members
+### Get all Members
 
 ```bash
 curl -X GET http://127.0.0.1/members
 ```
 
-### Get One Member by Id
+### Get a Member by Id
 
 ```bash
 curl -X GET http://127.0.0.1/members/<int:member_id>
 ```
 
-### Add A Member
+### Add a Member
 
 ```bash
 curl -X POST http://127.0.0.1/members \
@@ -113,7 +113,7 @@ curl -X POST http://127.0.0.1/members \
 }'
 ```
 
-### Edit/Update An Existing Member by Id
+### Edit/Update an Existing Member by Id
 
 ```bash
 curl -X PUT http://127.0.0.1/members/<int:member_id> \
@@ -127,7 +127,7 @@ curl -X PUT http://127.0.0.1/members/<int:member_id> \
 }'
 ```
 
-### Delete A Member by Id
+### Delete a Member by Id
 
 ```bash
 curl -X DELETE http://127.0.0.1/members/<int:member_id>
@@ -163,10 +163,16 @@ curl -X POST http://127.0.0.1/members/<int:member_id>/return \
 curl -X POST 'http://127.0.0.1/balances/all'
 ```
 
+### Clear a Member's balance
+
+```bash
+curl -X GET 'http://127.0.0.1/balances/<int:user_id>/all'
+```
+
 ## Testing with Pytest
 
 Run all tests with Pytest
 
 ```bash
-pytest --cov
+pytest --cov --disable-warnings
 ```

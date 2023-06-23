@@ -2,10 +2,9 @@ from http import HTTPStatus
 
 import pendulum
 from flask import Blueprint, Response, jsonify
-from flask_pydantic import validate
 from sqlalchemy import text
 
-from .schemas import UserBalances, ClearUserBalancesSchema
+from .schemas import UserBalances
 from ..extensions import db
 from ..models import User, UserBalance
 
@@ -34,10 +33,9 @@ def get_all_user_balances() -> tuple[dict, HTTPStatus] | tuple[Response, HTTPSta
     return jsonify(details="Not Found."), HTTPStatus.NOT_FOUND
 
 
-@balances.route("/balances/clear", methods=["POST"])
-@validate(body=ClearUserBalancesSchema)
-def clear_user_balances(body: ClearUserBalancesSchema) -> tuple[Response, HTTPStatus]:
-    user = User.get_by_id(body.user_id)
+@balances.route("/balances/<int:user_id>/clear", methods=["GET"])
+def clear_user_balances(user_id: int) -> tuple[Response, HTTPStatus]:
+    user = User.get_by_id(user_id)
 
     if user:
         user_balance = UserBalance.create(
