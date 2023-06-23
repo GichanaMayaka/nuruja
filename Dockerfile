@@ -1,7 +1,6 @@
 FROM python:3.10.0
 LABEL authors="SaintSanes"
 
-
 ARG ENV
 
 ENV ENV=${ENV} \
@@ -22,9 +21,9 @@ COPY poetry.lock pyproject.toml /nuruja/
 
 # Project initialization:
 RUN poetry config virtualenvs.create false \
-  && poetry install $(test "$ENV" == prod && echo "--no-dev") --no-interaction --no-ansi
+  && poetry install $(test "$ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
-# Creating folders, and files for a project:
+# Creating folders, and files for project:
 COPY . /nuruja
 
 RUN chmod +x init.sh
