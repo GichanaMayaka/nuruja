@@ -63,8 +63,8 @@ class Transactions(db.Model, CRUDMixin):
     )
 
     # Foreign Key[s]
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='cascade'))
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id", ondelete='cascade'))
 
     # Relationship[s]
     book = db.relationship("Book", back_populates="transactions")
@@ -81,8 +81,8 @@ class UserBalance(db.Model, CRUDMixin):
     )
 
     # Foreign Key[s]
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    transaction_id = db.Column(db.Integer, db.ForeignKey("transactions.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete='cascade'))
+    transaction_id = db.Column(db.Integer, db.ForeignKey("transactions.id", ondelete='cascade'))
 
     # Relationship[s]
     user = db.relationship("User", back_populates="user_balance")
