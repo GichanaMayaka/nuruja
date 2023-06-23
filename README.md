@@ -4,7 +4,7 @@ This is a simple Library Management System that allows one to Add a book and mem
 a book return, and manage rent-fees and late penalty fees. The API is hosted on [Render](https://nuruja.onrender.com).
 The front-end source code is in the [nuruja-frontend](https://github.com/GichanaMayaka/nuruja-frontend) repo
 
-## To Setup and Start (Local Setup)
+## Setup and Start (Local Setup)
 
 Supply a .env file to the root repository directory with following configurations options:
 
@@ -58,7 +58,6 @@ curl -X POST http://127.0.0.1/books \
     "isbn": " 9780262046305",
     "date_of_publication": "1989-01-01T00:00:00",
     "status": "not-rented",
-    "category": "Computer Science",
     "rent_fee": 100,
     "late_penalty_fee": 25
 }'
@@ -75,7 +74,6 @@ curl -X PUT http://127.0.0.1/books/<int:book_id> \
     "isbn": " 9780262046305",
     "date_of_publication": "1989-01-01T00:00:00",
     "status": "not-rented",
-    "category": "Computer Science",
     "rent_fee": 100,
     "late_penalty_fee": 25
 }'
