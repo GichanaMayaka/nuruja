@@ -20,7 +20,7 @@ books = Blueprint("books", __name__)
 
 @books.route("/books/new", methods=["POST"])
 @validate(body=BookRequestSchema)
-def add_a_book(body: BookRequestSchema) -> tuple[Response, int]:
+def add_a_book(body: BookRequestSchema) -> tuple[Response, HTTPStatus]:
     book = Book.query.filter(
         and_(
             Book.isbn == body.isbn, Book.title == body.title, Book.author == body.author
@@ -45,7 +45,7 @@ def add_a_book(body: BookRequestSchema) -> tuple[Response, int]:
 
 
 @books.route("/books", methods=["GET"])
-def get_all_books() -> Union[tuple[dict, int], tuple[Response, int]]:
+def get_all_books() -> Union[tuple[dict, int], tuple[Response, HTTPStatus]]:
     all_books = Book.query.all()
 
     if all_books:
@@ -55,7 +55,7 @@ def get_all_books() -> Union[tuple[dict, int], tuple[Response, int]]:
 
 
 @books.route("/books/<int:book_id>", methods=["GET"])
-def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int]]:
+def get_single_book(book_id: int) -> Union[tuple[dict, HTTPStatus], tuple[Response, HTTPStatus]]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
@@ -65,7 +65,7 @@ def get_single_book(book_id: int) -> Union[tuple[dict, int], tuple[Response, int
 
 
 @books.route("/books/<int:book_id>/delete", methods=["DELETE"])
-def remove_book(book_id: int) -> tuple[Response, int]:
+def remove_book(book_id: int) -> tuple[Response, HTTPStatus]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
@@ -78,7 +78,7 @@ def remove_book(book_id: int) -> tuple[Response, int]:
 
 @books.route("/books/<int:book_id>", methods=["PUT"])
 @validate(body=BookRequestSchema)
-def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response, int]:
+def update_book_details(book_id: int, body: BookRequestSchema) -> tuple[Response, HTTPStatus]:
     book = Book.query.filter(Book.id == book_id).first()
 
     if book:
