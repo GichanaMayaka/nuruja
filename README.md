@@ -116,7 +116,7 @@ curl -X POST http://127.0.0.1/members \
 ### Edit/Update An Existing Member by Id
 
 ```bash
-curl -X POST http://127.0.0.1/members/<int:member_id> \
+curl -X PUT http://127.0.0.1/members/<int:member_id> \
 -H 'Content-Type: application/json' \
 -d '{
     "username": "The Crippled God",
