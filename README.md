@@ -166,7 +166,7 @@ curl -X POST 'http://127.0.0.1/balances/all'
 ### Clear a Member's balance
 
 ```bash
-curl -X GET 'http://127.0.0.1/balances/<int:user_id>/all'
+curl -X GET 'http://127.0.0.1/balances/<int:user_id>/clear'
 ```
 
 ## Testing with Pytest
