@@ -1,4 +1,4 @@
-# Project Nuruja
+# Nuruja
 
 This is a simple Library Management System that allows one to Add a book and member, lend a book to a member, initiate
 a book return, and manage rent-fees and late penalty fees. The API is hosted on [Render](https://nuruja.onrender.com).
@@ -6,7 +6,7 @@ The front-end source code is in the [nuruja-frontend](https://github.com/Gichana
 
 ## Setup and Start (Local Setup)
 
-Supply a .env file to the root repository directory with following configurations options:
+Supply a _.env_ file to the root repository directory with following configurations options:
 
 ```dotenv
 DEV_POSTGRES_DSN=postgresql://[user[:password]@][hostname][:port][/devDBName]
