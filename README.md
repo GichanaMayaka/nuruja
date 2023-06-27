@@ -1,8 +1,9 @@
 # Nuruja
 
 This is a simple Library Management System that allows one to Add a book and member, lend a book to a member, initiate
-a book return, and manage rent-fees and late penalty fees. The API is hosted on [Render](https://nuruja.onrender.com).
-The front-end source code is in the [nuruja-frontend](https://github.com/GichanaMayaka/nuruja-frontend) repo
+a book return, and manage rent-fees and late penalty fees. The API is hosted on [Render](https://render.com/).
+The front-end source code is in the [Nuruja-Frontend](https://github.com/GichanaMayaka/nuruja-frontend) repo and the app
+is hosted at [Nuruja](https://nuruja.vercel.app).
 
 ## Setup and Start (Local Setup)
 
@@ -51,8 +52,8 @@ curl -X GET http://127.0.0.1/books/<int:book_id>
 
 ```bash
 curl -X POST http://127.0.0.1/books \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "title": "Introduction to Algorithms",
     "author": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein",
     "isbn": " 9780262046305",
@@ -60,15 +61,15 @@ curl -X POST http://127.0.0.1/books \
     "status": "not-rented",
     "rent_fee": 100,
     "late_penalty_fee": 25
-}'
+}
 ```
 
 ### Edit/Update an Existing Book by Id
 
 ```bash
 curl -X PUT http://127.0.0.1/books/<int:book_id> \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "title": "Introduction to Algorithms",
     "author": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein",
     "isbn": " 9780262046305",
@@ -76,7 +77,7 @@ curl -X PUT http://127.0.0.1/books/<int:book_id> \
     "status": "not-rented",
     "rent_fee": 100,
     "late_penalty_fee": 25
-}'
+}
 ```
 
 ### Delete a Book by Id
@@ -103,28 +104,28 @@ curl -X GET http://127.0.0.1/members/<int:member_id>
 
 ```bash
 curl -X POST http://127.0.0.1/members \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "username": "The Crippled God",
     "email": "chained-one@gmail.com",
     "phone_number": "123654789",
     "address": "Genabackis",
     "is_admin": "false"
-}'
+}
 ```
 
 ### Edit/Update an Existing Member by Id
 
 ```bash
 curl -X PUT http://127.0.0.1/members/<int:member_id> \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "username": "The Crippled God",
     "email": "chained-one@gmail.com",
     "phone_number": "123654789",
     "address": "Genabackis",
     "is_admin": "false"
-}'
+}
 ```
 
 ### Delete a Member by Id
@@ -139,20 +140,20 @@ curl -X DELETE http://127.0.0.1/members/<int:member_id>
 
 ```bash
 curl -X POST http://127.0.0.1/members/<int:member_id>/borrow \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "book_id": 1
-}'
+}
 ```
 
 ### Initiate a Book Return
 
 ```bash
 curl -X POST http://127.0.0.1/members/<int:member_id>/return \
--H 'Content-Type: application/json' \
--d '{
+-H Content-Type: application/json \
+-d {
     "book_id": 1
-}'
+}
 ```
 
 ## Balances Enquiries
@@ -160,13 +161,13 @@ curl -X POST http://127.0.0.1/members/<int:member_id>/return \
 ### View all Members' balances
 
 ```bash
-curl -X POST 'http://127.0.0.1/balances/all'
+curl -X POST http://127.0.0.1/balances/all
 ```
 
 ### Clear a Member's balance
 
 ```bash
-curl -X GET 'http://127.0.0.1/balances/<int:user_id>/clear'
+curl -X GET http://127.0.0.1/balances/<int:user_id>/clear
 ```
 
 ## Testing with Pytest
