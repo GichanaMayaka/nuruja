@@ -78,3 +78,34 @@ class ClearUserBalancesSchema(BaseSchema):
 
 class SearchParameters(BaseSchema):
     parameters: str = ""
+
+
+# The following are schemas for analytics component of the web application.
+# They are tailored for compatibility with nivo charts
+class PendingReturnsAnalyticsSchema(BaseSchema):
+    username: str = "Total Pending Returns"
+    children: list[UserBalance]
+
+
+class BookStatusSchema(BaseSchema):
+    id: str
+    label: str
+    value: int
+
+
+class BookStatusAnalyticsSchema(BaseSchema):
+    data: list[BookStatusSchema]
+
+
+class SeriesSchema(BaseSchema):
+    x: DateTime
+    y: int
+
+
+class BalanceSeriesAnalyticsSchema(BaseSchema):
+    id: str = "Balance Amount Over Time"
+    data: list[SeriesSchema]
+
+
+class BalanceSeriesSchema(BaseSchema):
+    data: list[BalanceSeriesAnalyticsSchema]

@@ -11,6 +11,7 @@ from .controllers.books import books
 from .controllers.members import members
 from .controllers.search import search
 from .controllers.transactions import transactions
+from .controllers.analytics import analytics
 from .extensions import cors, db, migrations
 from .models import User
 
@@ -61,3 +62,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(transactions)
     app.register_blueprint(balances)
     app.register_blueprint(search)
+    app.register_blueprint(analytics)
